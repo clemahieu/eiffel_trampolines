@@ -1,0 +1,97 @@
+note
+	description: "Summary description for {MALLOC_ZONE}."
+	author: "Colin LeMahieu"
+	date: "$Date$"
+	revision: "$Revision$"
+	quote: "The desire to rule is the mother of heresies. - St. John Chrysostom"
+
+class
+	MALLOC_ZONE
+
+create
+	make
+
+feature {NONE}
+
+	make (size: NATURAL_64)
+		local
+			error: INTEGER_32
+			init_ret: NATURAL_64
+		do
+			pool := mmap (default_pointer, {NATURAL_64}1024 * {NATURAL_64}1024, prot_exec.bit_or (prot_read).bit_or (prot_write), map_anonymous.bit_or (map_populate).bit_or (map_private), -1, 0, $error)
+			init_ret := init_memory_pool (size, pool)
+		end
+
+	pool: POINTER
+
+feature
+
+	malloc (size: NATURAL_64): POINTER
+		do
+			Result := malloc_ex (size, pool)
+		end
+
+feature {NONE} -- Implementation
+
+	prot_read: INTEGER_32 = 0x1
+
+	prot_write: INTEGER_32 = 0x2
+
+	prot_exec: INTEGER_32 = 0x4
+
+	map_anonymous: INTEGER_32 = 0x20
+
+	map_populate: INTEGER_32 = 0x8000
+
+	map_private: INTEGER_32 = 0x02
+
+feature {NONE} -- Externals
+
+	mmap (start: POINTER; length: NATURAL_64; protection: INTEGER_32; flags: INTEGER_32; fd: INTEGER_32; off: INTEGER_64; error: TYPED_POINTER [INTEGER_32]): POINTER
+		external
+			"C inline use %"sys/mman.h%", %"errno.h%""
+		alias
+			"[
+				void * result;
+				
+				result = mmap ($start, $length, $protection, $flags, $fd, $off);
+				if (result != 0)
+				{
+					*((int *)$error) = errno;
+				}
+				
+				return result;
+			]"
+		end
+
+	init_memory_pool (size: NATURAL_64; pool_a: POINTER): NATURAL_64
+		external
+			"C inline use %"tlsf.h%""
+		alias
+			"[
+				return init_memory_pool ($size, $pool_a);
+			]"
+		end
+
+	malloc_ex (size: NATURAL_64; pool_a: POINTER): POINTER
+		external
+			"C inline use %"tlsf.h%""
+		alias
+			"[
+				return malloc_ex ($size, $pool_a);
+			]"
+		end
+
+invariant
+	pool /= default_pointer
+note
+	copyright: "Copyright (c) 1984-2010, Eiffel Software and others"
+	license: "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
+	source: "[
+			Eiffel Software
+			5949 Hollister Ave., Goleta, CA 93117 USA
+			Telephone 805-685-1006, Fax 805-685-6869
+			Website http://www.eiffel.com
+			Customer support http://support.eiffel.com
+		]"
+end

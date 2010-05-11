@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<system xmlns="http://www.eiffel.com/developers/xml/configuration-1-6-0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.eiffel.com/developers/xml/configuration-1-6-0 http://www.eiffel.com/developers/xml/configuration-1-6-0.xsd" name="gcc_x86_linux_trampoline" uuid="840F5D54-5563-4659-B53B-E9F126E15640" library_target="gcc_x86_c_linux_trampoline">
+	<target name="gcc_x86_c_linux_trampoline">
+		<root class="MALLOC_ZONE" feature="default_create"/>
+		<option warning="true">
+			<assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
+		</option>
+		<external_include location="./tlsf_src/"/>
+		<external_object location="./tlsf.a"/>
+		<variable name="project" value="/home/colin/Desktop/eiffel_trampolines/gcc_x86_c_linux"/>
+		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf"/>
+		<cluster name="gcc_x86_c_linux_trampoline" location=".\" recursive="true">
+			<file_rule>
+				<exclude>/EIFGENs$</exclude>
+				<exclude>/CVS$</exclude>
+				<exclude>/.svn$</exclude>
+				<exclude>/tlsf_src$</exclude>
+				<exclude>/tests$</exclude>
+			</file_rule>
+		</cluster>
+	</target>
+</system>
